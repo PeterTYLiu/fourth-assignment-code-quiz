@@ -1,0 +1,8 @@
+#view-scores {
+  color: blue;
+}
+
+#view-scores:hover {
+  color: lightblue;
+  cursor: pointer;
+}

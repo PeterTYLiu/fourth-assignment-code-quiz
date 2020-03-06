@@ -39,6 +39,7 @@ button.choice {
 }
 button {
   user-select: none;
+  margin-right: 1rem;
 }
 button.correct {
   background-color: green !important;

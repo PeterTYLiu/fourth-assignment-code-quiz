@@ -1,5 +1,4 @@
 let row = document.querySelector(".row");
-let viewScores = document.querySelector("#view-scores");
 let time = document.querySelector("#time");
 let questions = [
   {
@@ -58,7 +57,7 @@ let wrongAnswerDeduction = 10;
 let timer;
 let currentQuestion;
 let countDown;
-let cooldownDelay = 2000;
+let cooldownDelay = 3000;
 
 let clearRow = () => (row.innerHTML = "");
 
@@ -66,6 +65,32 @@ let putInRow = element => {
   clearRow();
   row.appendChild(element);
 };
+
+let viewScores = document.querySelector("#view-scores");
+
+// ------------------------------------------------------------------------------------------------------
+// ==================================== Creating the home DOM object ====================================
+// ------------------------------------------------------------------------------------------------------
+
+let home = document.createElement("div");
+home.classList.add("column");
+home.setAttribute("style", "text-align: center;");
+
+let homeTitle = document.createElement("h1");
+homeTitle.innerText = "Coding Quiz";
+home.appendChild(homeTitle);
+
+let homeIntro = document.createElement("p");
+homeIntro.innerHTML = "You code good? Answer questions! Wrong answer minus 10.";
+home.appendChild(homeIntro);
+
+let startQuizButton = document.createElement("button");
+startQuizButton.innerText = "Start quiz";
+startQuizButton.classList.add("button-primary");
+home.appendChild(startQuizButton);
+
+// Initializes on the home page
+putInRow(home);
 
 // ------------------------------------------------------------------------------------------------------
 // ==================================== Creating the quiz DOM object ====================================
@@ -149,11 +174,91 @@ buttons.forEach(button => {
     }
     // Asks the next question after 5 seconds
     setTimeout(() => {
-      console.log(`Question index ${currentQuestion} incoming`);
       askQuestion();
     }, cooldownDelay);
   });
 });
+
+// ----------------------------------------------------------------------------------------------------------
+// ==================================== Creating the hiscores DOM object ====================================
+// ----------------------------------------------------------------------------------------------------------
+
+let hiscoresPage = document.createElement("div");
+hiscoresPage.classList.add("column");
+
+let hiscoresTitle = document.createElement("h2");
+hiscoresTitle.innerText = "Hiscores";
+hiscoresPage.appendChild(hiscoresTitle);
+
+let hiscoresContent = document.createElement("div");
+hiscoresPage.appendChild(hiscoresContent);
+
+// ----------------------------------------------------------------------------------------------------------------
+// ==================================== The function that goes to the hiscores ====================================
+// ----------------------------------------------------------------------------------------------------------------
+
+let goToHiscores = () => {
+  time.classList.add("hide");
+  viewScores.classList.add("hide");
+  hiscoresContent.innerHTML = null;
+  putInRow(hiscoresPage);
+  if (hiscores.length == 0) {
+    let noHiscores = document.createElement("p");
+    noHiscores.innerHTML = "There are no hiscores!";
+    hiscoresContent.appendChild(noHiscores);
+  } else {
+    let hiscoresTable = document.createElement("table");
+    let tableHeader = document.createElement("tr");
+    let tableNames = document.createElement("th");
+    tableNames.innerHTML = "NAME";
+    tableHeader.appendChild(tableNames);
+    let tableScores = document.createElement("th");
+    tableScores.innerHTML = "SCORE";
+    tableHeader.appendChild(tableScores);
+    hiscoresTable.appendChild(tableHeader);
+
+    let sortedHiscores = hiscores.sort((a, b) => {
+      return b["score"] - a["score"];
+    });
+
+    console.log(sortedHiscores);
+
+    hiscores.forEach(entry => {
+      let entryRow = document.createElement("tr");
+      let entryName = document.createElement("td");
+      entryName.innerHTML = entry["initials"];
+      entryRow.appendChild(entryName);
+      let entryScore = document.createElement("td");
+      entryScore.innerHTML = entry["score"];
+      entryRow.appendChild(entryScore);
+      hiscoresTable.appendChild(entryRow);
+    });
+
+    hiscoresContent.appendChild(hiscoresTable);
+
+    let clearHiscores = document.createElement("button");
+    clearHiscores.innerHTML = "Clear hiscores";
+    hiscoresContent.appendChild(clearHiscores);
+
+    clearHiscores.addEventListener("click", () => {
+      hiscores = [];
+      goToHiscores();
+    });
+  }
+  let goHome = document.createElement("button");
+  goHome.innerHTML = "Home";
+  hiscoresContent.appendChild(goHome);
+
+  goHome.addEventListener("click", () => {
+    viewScores.classList.remove("hide");
+    putInRow(home);
+  });
+};
+
+viewScores.addEventListener("click", () => {
+  goToHiscores();
+});
+
 // ---------------------------------------------------------------------------------------------------------
 // ==================================== Creating the results DOM object ====================================
 // ---------------------------------------------------------------------------------------------------------
@@ -179,6 +284,8 @@ submitScore.innerHTML = "Submit";
 submitScore.addEventListener("click", function() {
   hiscores.push({ initials: enterInitials.value, score: timer });
   console.log({ initials: enterInitials.value, score: timer });
+  enterInitials.value = "";
+  goToHiscores();
 });
 results.appendChild(submitScore);
 
@@ -216,17 +323,22 @@ let askQuestion = () => {
     // Insert the question into the H2 tag
     question.innerHTML = questions[currentQuestion]["question"];
     console.log(`Question asked`);
+
     // Inserts the question choices into the buttons in random order
-    let randomizeChoices = questions[currentQuestion]["choices"];
+    let randomizeChoices = questions[currentQuestion]["choices"].slice();
+    console.log(randomizeChoices);
     for (let i = 0; i < 4; i++) {
       let randomIndex = Math.floor(Math.random() * randomizeChoices.length);
-      buttons[i].innerHTML = questions[currentQuestion]["choices"][randomIndex];
+      console.log(randomIndex);
+      buttons[i].innerHTML = randomizeChoices[randomIndex];
+      console.log([randomizeChoices][randomIndex]);
       randomizeChoices.splice(randomIndex, 1);
+      console.log(randomizeChoices);
     }
-    console.log(`Choices provided`);
   } else {
     score.innerText = `Your score is ${timer}`;
     putInRow(results);
+    time.classList.add("hide");
   }
 };
 
@@ -236,14 +348,11 @@ let askQuestion = () => {
 
 let startQuiz = () => {
   putInRow(quiz);
+  time.classList.remove("hide");
   timer = 75;
   currentQuestion = 0;
   viewScores.classList.toggle("hide");
   askQuestion();
 };
 
-document.querySelector("#start-button").addEventListener("click", startQuiz);
-
-// ----------------------------------------------------------------------------------------------------------------
-// ==================================== The function that goes to the hiscores ====================================
-// ----------------------------------------------------------------------------------------------------------------
+startQuizButton.addEventListener("click", startQuiz);

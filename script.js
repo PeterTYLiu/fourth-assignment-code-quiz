@@ -130,7 +130,7 @@ for (let i = 0; i < 5; i++) {
 // -------------------------------------------------------------------------------------------------------------
 
 buttons.forEach(button => {
-  button.addEventListener("click", function(event) {
+  button.addEventListener("click", event => {
     // What happens if you choose the WRONG answer
     if (event.currentTarget.innerHTML != questions[currentQuestion]["answer"]) {
       event.currentTarget.classList.add("incorrect");
@@ -230,6 +230,7 @@ let goToHiscores = () => {
       entryRow.appendChild(entryName);
       let entryScore = document.createElement("td");
       entryScore.innerHTML = entry["score"];
+      entryScore.setAttribute("style", "text-align: right");
       entryRow.appendChild(entryScore);
       hiscoresTable.appendChild(entryRow);
     });
@@ -247,6 +248,7 @@ let goToHiscores = () => {
     });
   }
   let goHome = document.createElement("button");
+  goHome.classList.add("button-primary");
   goHome.innerHTML = "Home";
   hiscoresContent.appendChild(goHome);
 
@@ -282,11 +284,16 @@ results.appendChild(enterInitials);
 let submitScore = document.createElement("button");
 submitScore.classList.add("button");
 submitScore.innerHTML = "Submit";
-submitScore.addEventListener("click", function() {
-  hiscores.push({ initials: enterInitials.value, score: timer });
-  localStorage.setItem("hiscores", JSON.stringify(hiscores));
-  enterInitials.value = "";
-  goToHiscores();
+submitScore.addEventListener("click", () => {
+  if (enterInitials.value) {
+    hiscores.push({ initials: enterInitials.value, score: timer });
+    localStorage.setItem("hiscores", JSON.stringify(hiscores));
+    enterInitials.value = "";
+    initialsLabel.classList.remove("warning");
+    goToHiscores();
+  } else {
+    initialsLabel.classList.add("warning");
+  }
 });
 results.appendChild(submitScore);
 
@@ -309,7 +316,7 @@ let askQuestion = () => {
     });
 
     // Starts the countdown timer
-    countDown = setInterval(function() {
+    countDown = setInterval(() => {
       if (timer > 0) {
         timer--;
         time.innerHTML = `Time remaining: ${timer} s`;

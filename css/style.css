@@ -25,11 +25,25 @@ h6 {
   height: 1.1rem;
   margin: 0.5rem;
 }
+/*================= RESULTS =================*/
 
 input {
   display: block;
   height: 2rem;
   padding: 1rem;
+}
+
+.warning {
+  color: #b00;
+}
+
+.warning::before {
+  content: "!";
+  color: #b00;
+  border-radius: 50%;
+  border: 1px solid #b00;
+  padding: 0rem 0.6rem;
+  margin-right: 1rem;
 }
 
 /*================= BUTTONS =================*/

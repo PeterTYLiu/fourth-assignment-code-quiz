@@ -52,7 +52,7 @@ let questions = [
     answer: "A re-executing function"
   }
 ];
-let hiscores = [];
+let hiscores = localStorage.hiscores ? JSON.parse(localStorage.hiscores) : [];
 let wrongAnswerDeduction = 10;
 let timer;
 let currentQuestion;
@@ -242,6 +242,7 @@ let goToHiscores = () => {
 
     clearHiscores.addEventListener("click", () => {
       hiscores = [];
+      localStorage.setItem("hiscores", JSON.stringify(hiscores));
       goToHiscores();
     });
   }
@@ -283,7 +284,7 @@ submitScore.classList.add("button");
 submitScore.innerHTML = "Submit";
 submitScore.addEventListener("click", function() {
   hiscores.push({ initials: enterInitials.value, score: timer });
-  console.log({ initials: enterInitials.value, score: timer });
+  localStorage.setItem("hiscores", JSON.stringify(hiscores));
   enterInitials.value = "";
   goToHiscores();
 });

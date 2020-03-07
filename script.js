@@ -322,6 +322,7 @@ let askQuestion = () => {
         time.innerHTML = `Time remaining: ${timer} s`;
       }
     }, 1000);
+
     console.log(`Countdown started`);
     // Insert the question number into the H6 tag
     questionNumber.innerHTML = `Question ${currentQuestion + 1} of ${
